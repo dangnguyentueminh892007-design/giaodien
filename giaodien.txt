@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khu Rừng Phát Âm Tiếng Anh Vui Nhộn</title>
+    <style>
+        :root {
+            --bg-forest: #e3faf2;
+            --sky-color: #7dd3fc;
+            --grass-color: #4ade80;
+            --text-color: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, var(--sky-color), var(--bg-forest));
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-color);
+            transition: background 0.5s ease;
+        }
+
+        /* Hiệu ứng môi trường theo trạng thái */
+        body.success {
+            background: linear-gradient(to bottom, #a7f3d0, #34d399);
+        }
+        body.wrong {
+            background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
+        }
+
+        h1 {
+            color: #047857;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Khu rừng & Động vật */
+        .forest-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 3.5rem;
+            margin: 20px 0;
+            min-height: 80px;
+        }
+
+        .animal, .tree {
+            transition: transform 0.3s ease, filter 0.3s ease;
+            display: inline-block;
+        }
+
+        /* Hiệu ứng hoạt họa cho động vật */
+        .waiting .animal {
+            animation: idle 2s infinite ease-in-out;
+        }
+        .success .animal {
+            animation: jump 0.5s infinite alternate ease-in-out;
+        }
+        .wrong .animal {
+            animation: shake 0.5s infinite;
+            filter: grayscale(80%);
+        }
+
+        @keyframes idle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        @keyframes jump {
+            0% { transform: scale(1) translateY(0); }
+            100% { transform: scale(1.1) translateY(-20px); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(-5px) rotate(-5px); }
+            75% { transform: translateX(5px) rotate(5px); }
+        }
+
+        /* Thẻ từ vựng chính */
+        .card-container {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            border: 4px solid #86efac;
+            position: relative;
+        }
+
+        .word-type {
+            background: #dcfce7;
+            color: #166534;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .word-target {
+            font-size: 2.5rem;
+            color: #059669;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .ipa {
+            font-size: 1.4rem;
+            color: #64748b;
+            font-family: 'Lucida Sans Unicode', sans-serif;
+            margin-bottom: 15px;
+            background: #f1f5f9;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 8px;
+        }
+
+        /* Hình minh họa bằng Emoji lớn sinh động */
+        .illustration {
+            font-size: 4rem;
+            margin: 15px 0;
+            background: #f8fafc;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            margin: 0 auto 15px auto;
+            box-shadow: inner 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .example-sentence {
+            font-size: 1.1rem;
+            color: #475569;
+            font-style: italic;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+
+        .example-translation {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        /* Nút bấm và điều hướng */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 10px;
+        }
+
+        button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+
+        button:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.btn-nav {
+            background: #3b82f6;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+        }
+        button.btn-nav:hover { background: #2563eb; }
+
+        button#micBtn {
+            background: #ef4444;
+            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+            font-size: 1.2rem;
+            padding: 15px 30px;
+        }
+        button#micBtn:hover { background: #dc2626; }
+        button#micBtn.recording {
+            animation: pulse 1s infinite alternate;
+            background: #b91c1c;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            100% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+        }
+
+        /* Phản hồi kết quả */
+        .feedback {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 30px;
+        }
+        .text-heard {
+            font-size: 1rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body class="waiting">
+
+    <h1>🌳 Khu Rừng Phát Âm Tiếng Anh 🦊</h1>
+    
+    <div class="forest-container" id="forest animate">
+        <span class="tree">🌳</span>
+        <span class="animal" id="animal1">🦊</span>
+        <span class="tree">🌲</span>
+        <span class="animal" id="animal2">🦁</span>
+        <span class="tree">🌴</span>
+        <span class="animal" id="animal3">🐰</span>
+    </div>
+
+    <div class="card-container">
+        <span class="word-type" id="wordType">Từ phức (Compound Word)</span>
+        <div class="word-target" id="wordTarget">Artificial Intelligence</div>
+        <div class="ipa" id="wordIpa">/ˌɑː.tɪ.fɪʃ.əl ɪnˈtel.ɪ.dʒəns/</div>
+        
+        <div class="illustration" id="wordIllustration">🤖</div>
+        
+        <div class="example-sentence" id="wordExample">"Artificial Intelligence helps robots think like humans."</div>
+        <div class="example-translation" id="wordTranslation">(Trí tuệ nhân tạo giúp rô-bốt suy nghĩ giống con người.)</div>
+
+        <button id="micBtn">🎙️ Nhấn để đọc</button>
+        
+        <div class="feedback" id="feedbackMsg">Hãy nhấn mic và đọc to từ trên nhé!</div>
+        <div class="text-heard" id="textHeard"></div>
+
+        <div class="controls">
+            <button class="btn-nav" id="prevBtn">⬅️ Từ trước</button>
+            <button class="btn-nav" id="nextBtn">Từ tiếp theo ➡️</button>
+        </div>
+    </div>
+
+    <script>
+        // Danh sách 8 từ vựng yêu cầu
+        const vocabulary = [
+            {
+                word: "Artificial Intelligence",
+                ipa: "/ˌɑː.tɪ.fɪʃ.əl ɪnˈtel.ɪ.dʒəns/",
+                type: "Từ phức (Compound Noun)",
+                illustration: "🤖",
+                example: "Artificial Intelligence helps robots think like humans.",
+                translation: "Trí tuệ nhân tạo giúp rô-bốt suy nghĩ giống con người."
+            },
+            {
+                word: "Facial Recognition",
+                ipa: "/ˌfeɪ.ʃəl ˌrek.əɡˈnɪʃ.ən/",
+                type: "Từ phức (Compound Noun)",
+                illustration: "👤📱",
+                example: "This phone uses facial recognition to unlock.",
+                translation: "Điện thoại này sử dụng nhận diện khuôn mặt để mở khóa."
+            },
+            {
+                word: "Chatbot",
+                ipa: "/ˈtʃæt.bɒt/",
+                type: "Từ đơn (Noun)",
+                illustration: "💬🤖",
+                example: "The chatbot answered my question instantly.",
+                translation: "Chatbot đã trả lời câu hỏi của tớ ngay lập tức."
+            },
+            {
+                word: "Virtual Reality",
+                ipa: "/ˌvɜː.tʃu.əl riˈæl.ə.ti/",
+                type: "Từ phức (Compound Noun)",
+                illustration: "🥽🎮",
+                example: "I play video games using virtual reality.",
+                translation: "Tớ chơi trò chơi điện tử bằng công nghệ thực tế ảo."
+            },
+            {
+                word: "Activate",
+                ipa: "/ˈæk.tɪ.veɪt/",
+                type: "Từ đơn (Verb)",
+                illustration: "🔘⚡",
+                example: "You can say 'Hey Google' to activate the phone.",
+                translation: "Cậu có thể nói 'Hey Google' để kích hoạt điện thoại."
+            },
+            {
+                word: "Smart app",
+                ipa: "/smɑːt æp/",
+                type: "Từ phức (Noun Phrase)",
+                illustration: "📱✨",
+                example: "This smart app tracks how many steps you walk.",
+                translation: "Ứng dụng thông minh này theo dõi số bước chân cậu đi."
+            },
+            {
+                word: "Platform",
+                ipa: "/ˈplæt.fɔːm/",
+                type: "Từ đơn (Noun)",
+                illustration: "💻🌐",
+                example: "YouTube is a popular platform for watching videos.",
+                translation: "YouTube là một nền tảng phổ biến để xem video."
+            },
+            {
+                word: "Technician",
+                ipa: "/tekˈnɪʃ.ən/",
+                type: "Từ đơn (Noun)",
+                illustration: "👨‍🔧🛠️",
+                example: "The technician fixed our broken computer.",
+                translation: "Chú kỹ thuật viên đã sửa chiếc máy tính bị hỏng của chúng tớ."
+            }
+        ];
+
+        let currentIndex = 0;
+
+        // Lấy các phần tử DOM
+        const wordType = document.getElementById('wordType');
+        const wordTarget = document.getElementById('wordTarget');
+        const wordIpa = document.getElementById('wordIpa');
+        const wordIllustration = document.getElementById('wordIllustration');
+        const wordExample = document.getElementById('wordExample');
+        const wordTranslation = document.getElementById('wordTranslation');
+        const feedbackMsg = document.getElementById('feedbackMsg');
+        const textHeard = document.getElementById('textHeard');
+        
+        const micBtn = document.getElementById('micBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        const animal1 = document.getElementById('animal1');
+        const animal2 = document.getElementById('animal2');
+        const animal3 = document.getElementById('animal3');
+
+        // Hàm cập nhật giao diện khi đổi từ
+        function updateCard() {
+            const currentItem = vocabulary[currentIndex];
+            wordType.innerText = currentItem.type;
+            wordTarget.innerText = currentItem.word;
+            wordIpa.innerText = currentItem.ipa;
+            wordIllustration.innerText = currentItem.illustration;
+            wordExample.innerText = `"${currentItem.example}"`;
+            wordTranslation.innerText = `(${currentItem.translation})`;
+            
+            // Trả trạng thái rừng về chờ đợi
+            resetForestState();
+        }
+
+        function resetForestState() {
+            document.body.className = "waiting";
+            feedbackMsg.innerText = "Hãy nhấn mic và đọc to từ trên nhé!";
+            feedbackMsg.style.color = "#1e293b";
+            textHeard.innerText = "";
+            animal1.innerText = "🦊";
+            animal2.innerText = "🦁";
+            animal3.innerText = "🐰";
+        }
+
+        // Cấu hình Web Speech API nhận diện giọng nói
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (!SpeechRecognition) {
+            feedbackMsg.innerText = "⚠️ Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome nhé!";
+            micBtn.style.display = "none";
+        } else {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US'; // Nhận diện tiếng Anh
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            micBtn.addEventListener('click', () => {
+                recognition.start();
+                micBtn.classList.add('recording');
+                micBtn.innerText = "🎧 Đang nghe nè...";
+                resetForestState();
+            });
+
+            recognition.onresult = (event) => {
+                micBtn.classList.remove('recording');
+                micBtn.innerText = "🎙️ Nhấn để đọc";
+                
+                // Lấy kết quả từ bé nói (chuyển về chữ thường, xóa dấu chấm để dễ so sánh)
+                let speechResult = event.results[0][0].transcript.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                let targetWord = vocabulary[currentIndex].word.toLowerCase().trim();
+
+                textHeard.innerText = `Bạn vừa nói: "${event.results[0][0].transcript}"`;
+
+                // Kiểm tra xem bé nói có đúng với từ mục tiêu không
+                if (speechResult === targetWord || speechResult.includes(targetWord)) {
+                    // Khi nói ĐÚNG
+                    document.body.className = "success";
+                    feedbackMsg.innerText = "🎉 Tuyệt vời! Bạn phát âm chuẩn lắm! ✨";
+                    feedbackMsg.style.color = "#047857";
+                    
+                    // Động vật mỉm cười, vui vẻ
+                    animal1.innerText = "🤩";
+                    animal2.innerText = "😸";
+                    animal3.innerText = "🥳";
+                } else {
+                    // Khi nói SAI
+                    document.body.className = "wrong";
+                    feedbackMsg.innerText = "😢 Gần đúng rồi! Thử lại một lần nữa xem sao nhé!";
+                    feedbackMsg.style.color = "#b91c1c";
+                    
+                    // Động vật buồn bã
+                    animal1.innerText = "😭";
+                    animal2.innerText = "😿";
+                    animal3.innerText = "🥺";
+                }
+            };
+
+            recognition.onspeechend = () => {
+                recognition.stop();
+                micBtn.classList.remove('recording');
+                micBtn.innerText = "🎙️ Nhấn để đọc";
+            };
+
+            recognition.onerror = (event) => {
+                micBtn.classList.remove('recording');
+                micBtn.innerText = "🎙️ Nhấn để đọc";
+                feedbackMsg.innerText = "⚠️ Tớ chưa nghe rõ, bạn bấm mic nói lại nha!";
+            };
+        }
+
+        // Sự kiện nút chuyển từ
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % vocabulary.length;
+            updateCard();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + vocabulary.length) % vocabulary.length;
+            updateCard();
+        });
+
+        // Khởi tạo từ đầu tiên khi load trang
+        updateCard();
+    </script>
+</body>
+</html>
